@@ -1,29 +1,23 @@
 {
-  "//1": "describes your app and its dependencies",
-  "//2": "https://docs.npmjs.com/files/package.json",
-  "//3": "updating this file will download and update your packages",
-  "name": "networked-aframe-glitch",
-  "version": "0.0.1",
-  "description": "What am I about?",
-  "main": "server.js",
+  "name": "metaassembly",
+  "version": "0.0.24",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "networked-aframe": "^0.6.0",
-    "qrcode": "^1.4.4",
-    "stream": "^0.0.2"
-  },
-  "engines": {
-    "node": "6.9.x"
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "url": "https://glitch.com/#!/project/networked-aframe"
+    "type": "git",
+    "url": "git+https://github.com/exokitxr/metaassembly.git"
   },
-  "license": "MIT",
-  "keywords": [
-    "node",
-    "glitch",
-    "express"
-  ]
+  "author": "Avaer Kazmer <a@modules.io>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/exokitxr/metaassembly/issues"
+  },
+  "homepage": "https://github.com/exokitxr/metaassembly#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
