@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- container for meta tag information -->
+    <title>Super-XR-Videochat</title>
+
+    <meta charset="UTF-8" />
+    <script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>
+    <script src="https://rawgit.com/rdub80/aframe-gui/master/dist/aframe-gui.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.scaledrone.com/scaledrone.min.js"
+    ></script>
+    <script src="js/main.js"></script>
+
+    <!--build:css css/styles.min.css-->
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+      crossorigin="anonymous"
+    />
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="assets/css/plugin.css" />
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="assets/css/dark.css" />
+
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- load external script files -->
+    <script src="js/travel-node-component.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css"
+    />
+    <style>
+      video {
+        max-width: calc(50% - 100px);
+        margin: 0 50px;
+        box-sizing: border-box;
+        border-radius: 2px;
+        padding: 0;
+        box-shadow: rgba(156, 172, 172, 0.2) 0px 2px 2px,
+          rgba(156, 172, 172, 0.2) 0px 4px 4px,
+          rgba(156, 172, 172, 0.2) 0px 8px 8px,
+          rgba(156, 172, 172, 0.2) 0px 16px 16px,
+          rgba(156, 172, 172, 0.2) 0px 32px 32px,
+          rgba(156, 172, 172, 0.2) 0px 64px 64px;
+      }
+    </style>
+
+    <script src="https://unpkg.com/aframe-play-sound-on-event@1.0.2/dist/aframe-play-sound-on-event.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script>
+    <script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+
+    <script src="https://unpkg.com/aframe-lensflare-component/dist/aframe-lensflare-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-animation-component@^4.1.2/dist/aframe-animation-component.min.js"></script>
+  </head>
+  <!--BODYBODYBODYBODY -->
+  <body>
+    <div id="preloader">
+      <div class="loader-logo text-center">
+        <img
+          src="https://beta-supercruisr.neocities.org/assets/img/logo.png"
+          alt=""
+        />
+        <p>LOADING SUPERCRUISR</p>
+      </div>
+    </div>
+
+    <!-- Start Header -->
+
+    <nav>
+      <div class="logo">
+        <a href="index.html"
+          ><img
+            src="https://beta-supercruisr.neocities.org/assets/img/logo.png"
+            alt="logo"
+        /></a>
+      </div>
+      <div class="toggle-btn">
+        <div class="burger-menu">
+          <span class="one"></span>
+          <span class="two"></span>
+          <span class="tre"></span>
+        </div>
+      </div>
+
+      <div class="bg-nav"></div>
+
+      <div class="manu-container">
+        <div class="menu">
+          <div class="data">
+            <div class="container">
+              <div class="row">
+                <video
+                  width="300"
+                  height="250"
+                  id="localVideo"
+                  autoplay
+                  muted
+                ></video
+                ><br />
+                <video
+                  width="300"
+                  height="250"
+                  id="remoteVideo"
+                  autoplay
+                ></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!--ENDENDENDNEND -->
+
+    <!--build:css css/styles.min.css-->
+
+    <!--endbuild-->
+
+    <a-scene>
+      <a-assets>
+        <img
+          crossorigin="anonymous"
+          id="feet"
+          src="https://beta-supercruisr.neocities.org/assets/white.png"
+        />
+      </a-assets>
+
+      <!-- teleport indicator -->
+      <a-entity
+        teleport-indicator="lookAtObj:[camera]"
+        position="2.5 0 -3.8"
+      ></a-entity>
+
+      <a-entity id="menu" gui="zpos:-1.5;yoffset:-1.35;" rotation="-30 0 0">
+        <a-entity
+          position="-0.35 0 0"
+          reload_btn="clickAction:reloadButtonAction"
+        ></a-entity>
+        <a-entity
+          position="0 0 0"
+          play_btn="clickAction:playButtonAction"
+        ></a-entity>
+
+        <a-entity position="0.5 0 0" audio_bar="vol:0.2">
+          <a-entity
+            position="-0.17 0 0"
+            audio_btn="clickAction:audioDownButtonAction"
+          ></a-entity>
+          <a-entity
+            position="0.17 0 0"
+            audio_btn="clickAction:audioUpButtonAction;thetaStart:-90;xOffset:0.0375;up:true"
+          ></a-entity>
+        </a-entity>
+        <!-- 
+      <a-entity geometry="primitive:plane; width:0.8; height:0.4" position="0 -0.3 0" material="color:#fff; src:#logo; opacity:1; transparent:true"></a-entity>
+ -->
+      </a-entity>
+
+      <a-circle rotation="-90 0 0" radius="40" color="#333"></a-circle>
+      <a-sky color="#999"></a-sky>
+
+      <a-icosahedron
+        position="-3 1 -4"
+        id="icosahedron"
+        color="#FF926B"
+        radius="0.3"
+      ></a-icosahedron>
+
+      <a-dodecahedron
+        position="0 1 -5"
+        id="dodecahedron"
+        color="#FF926B"
+        radius="0.3"
+      ></a-dodecahedron>
+
+      <a-octahedron
+        position="3 1 -4"
+        id="octahedron"
+        color="#FF926B"
+        radius="0.3"
+      ></a-octahedron>
+
+      <a-entity id="cameraRig" position="0 1.6 0">
+        <a-entity
+          camera
+          menutrigger="angle:-25;"
+          look-controls
+          wasd-controls
+          position="0 0 0"
+        >
+          <a-cursor></a-cursor>
+        </a-entity>
+      </a-entity>
+    </a-scene>
+
+    <script type="text/javascript">
+      (function() {
+        var max_vol = 1;
+        var min_vol = 0;
+        var default_vol = 0.5;
+        var _volObj = document.querySelector("a-entity[audio_bar]");
+
+        window.playButtonAction = function() {
+          console.log("playButtonAction");
+        };
+
+        window.reloadButtonAction = function() {
+          console.log("reloadButtonAction");
+        };
+
+        window.audioDownButtonAction = function() {
+          if (_volObj) {
+            default_vol = _volObj.getAttribute("audio_bar").vol;
+          }
+          default_vol = Math.round((default_vol - 0.1) * 10) / 10;
+          if (default_vol < min_vol) default_vol = 0;
+
+          document
+            .querySelector("a-entity[audio_bar]")
+            .setAttribute("audio_bar", "vol", default_vol);
+          console.log("audioDownButtonAction vol:" + default_vol);
+        };
+
+        window.audioUpButtonAction = function() {
+          if (_volObj) {
+            default_vol = _volObj.getAttribute("audio_bar").vol;
+          }
+          default_vol = Math.round((default_vol + 0.1) * 10) / 10;
+          if (default_vol > max_vol) default_vol = 1;
+          document
+            .querySelector("a-entity[audio_bar]")
+            .setAttribute("audio_bar", "vol", default_vol);
+          console.log("audioUpButtonAction vol:" + default_vol);
+        };
+      })();
+    </script>
+    <script src="scaledrone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script src="assets/js/plugin.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

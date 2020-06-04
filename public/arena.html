@@ -1,0 +1,530 @@
+<html>
+  <head>
+    <!-- container for meta tag information -->
+    <title>SuperCruisr</title>
+
+    <meta charset="UTF-8" />
+
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+      crossorigin="anonymous"
+    />
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="assets/css/plugin.css" />
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="assets/css/dark.css" />
+
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- load external script files -->
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css"
+    />
+
+    <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+    <script src="js/audioanalyser-waveform.js"></script>
+    <script src="js/audioanalyser-volume-bind.js"></script>
+    <script src="js/build.js"></script>
+    <script src="js/if-no-vr-headset.js"></script>
+    <script src="js/aframe-audioanalyser-component.js"></script>
+    <script src="js/aframe-audioanalyser-component.min.js"></script>
+    <script src="//cdn.rawgit.com/donmccurdy/aframe-extras/v5.0.1/dist/aframe-extras.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
+    <script src="js/spotify-web-api.js"></script>
+    <script src="js/spotify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
+    <script src="easyrtc/easyrtc.js"></script>
+    <script src="https://unpkg.com/networked-aframe@^0.6.0/dist/networked-aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-play-sound-on-event@1.0.2/dist/aframe-play-sound-on-event.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
+
+    <script src="js/travel-node-component.js"></script>
+
+    <script src="js/color-on-beat.js"></script>
+    <script src="js/ring-on-beat.js"></script>
+
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.x/dist/aframe-look-at-component.min.js"></script>
+  </head>
+
+  <body>
+    <div id="preloader">
+      <div class="loader-logo text-center">
+        <img
+          src="https://beta-supercruisr.neocities.org/assets/white.png"
+          alt=""
+        />
+        <p>Loading SuperCruisr</p>
+      </div>
+    </div>
+
+    <!-- Start Header -->
+
+    <nav>
+      <div class="logo">
+        <a href="index.html"
+          ><img
+            src="https://beta-supercruisr.neocities.org/assets/white.png"
+            alt="logo"
+        /></a>
+      </div>
+      <div class="toggle-btn">
+        <div class="burger-menu">
+          <span class="one"></span>
+          <span class="two"></span>
+          <span class="tre"></span>
+        </div>
+      </div>
+
+      <div class="bg-nav"></div>
+
+      <div class="manu-container">
+        <div class="menu">
+          <div class="data">
+            <div class="container">
+              <div class="loader-image">
+                <img
+                  src="https://beta-supercruisr.neocities.org/assets/blackloader.png"
+                  alt=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <a-scene
+      networked-scene="
+      room: audio;
+      adapter: easyrtc;
+      audio: true;
+      debug: true;
+    "
+      background="color: black;"
+    >
+      <a-assets>
+        <template id="avatar-template">
+          <a-entity class="avatar" networked-audio-source>
+            <a-sphere
+              class="head"
+              color="#5985ff"
+              scale="0.45 0.5 0.4"
+              random-color
+            ></a-sphere>
+            <a-entity class="face" position="0 0.05 0">
+              <a-sphere
+                class="eye"
+                color="#efefef"
+                position="0.16 0.1 -0.35"
+                scale="0.12 0.12 0.12"
+              >
+                <a-sphere
+                  class="pupil"
+                  color="#000"
+                  position="0 0 -1"
+                  scale="0.2 0.2 0.2"
+                ></a-sphere>
+              </a-sphere>
+              <a-sphere
+                class="eye"
+                color="#efefef"
+                position="-0.16 0.1 -0.35"
+                scale="0.12 0.12 0.12"
+              >
+                <a-sphere
+                  class="pupil"
+                  color="#000"
+                  position="0 0 -1"
+                  scale="0.2 0.2 0.2"
+                ></a-sphere>
+              </a-sphere>
+            </a-entity>
+          </a-entity>
+        </template>
+
+        <audio
+          id="click-sound"
+          crossorigin="anonymous"
+          src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"
+        ></audio>
+        <!-- /Templates -->
+        <a-asset-item
+          id="room"
+          src="https://cdn.glitch.com/9f5d1b92-a581-4134-8864-9bd98ff8ed97%2Fglassedit.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="arcade"
+          src="https://cdn.glitch.com/9f5d1b92-a581-4134-8864-9bd98ff8ed97%2Fconsole.glb"
+        ></a-asset-item>
+        <img
+          id="shirt"
+          src="https://cdn.glitch.com/2fc03f39-e4e7-4e6e-82e4-e96873254525%2FCheck.png"
+        />
+        <img
+          id="dawn"
+          crossorigin="anonymous"
+          src="https://cdn.glitch.com/9f5d1b92-a581-4134-8864-9bd98ff8ed97%2Fdawn.jpeg"
+        />
+        <a-mixin id="checkpoint"></a-mixin>
+        <a-mixin id="checkpoint-hovered" color="#6CEEB5"></a-mixin>
+      </a-assets>
+      <a-entity
+        id="player"
+        networked="template:#avatar-template;attachTemplateToLocal:false;"
+        camera
+        spawn-in-circle="radius:3;"
+        position="0 1.3 0"
+        wasd-controls
+        look-controls
+      >
+        <a-cursor></a-cursor>
+        <a-sphere class="head" visible="false" random-color></a-sphere>
+      </a-entity>
+
+      <a-light
+        type="point"
+        position="-6.09105 14.79719 136.11158"
+        color="#ff8040"
+      ></a-light>
+      <a-light type="point" position="212 2.6 -8" color="#ff8040"></a-light>
+      <a-light type="point" position="-200 47 0" color="#ff8040"></a-light>
+      <a-light
+        type="point"
+        position="-154 2.6 -136.6"
+        color="#ff8040"
+      ></a-light>
+
+      <a-gltf-model
+        src="#room"
+        position="-30 -6.9 5.43665"
+        scale="0.9 0.9 0.9"
+        rotation=""
+        gltf-model="https://cdn.glitch.com/9f5d1b92-a581-4134-8864-9bd98ff8ed97%2Fglassedit.glb"
+      >
+      </a-gltf-model>
+
+      <a-gltf-model
+        src="#arcade"
+        position="-0.01726 -0.26212 -4.96414"
+        scale="0.7 0.7 0.7"
+        rotation=""
+        gltf-model="https://cdn.glitch.com/9f5d1b92-a581-4134-8864-9bd98ff8ed97%2Fconsole.glb"
+      ></a-gltf-model>
+      <a-gltf-model
+        id="model"
+        src="https://cdn.glitch.com/9f5d1b92-a581-4134-8864-9bd98ff8ed97%2Fplayer.glb"
+        scale="0.05 0.05 0.05"
+        position="-14.98421 0.539 0.2107"
+        animation-mixer=""
+        gltf-model="https://cdn.glitch.com/9f5d1b92-a581-4134-8864-9bd98ff8ed97%2Fplayer.glb"
+        rotation="0 -90 0"
+      ></a-gltf-model>
+      <a-gltf-model
+        id="stage"
+        src="https://cdn.glitch.com/9f5d1b92-a581-4134-8864-9bd98ff8ed97%2Fstage.glb"
+        scale="3 3 3"
+        position="-92.40993 -0.06928 25.697"
+        gltf-model="https://cdn.glitch.com/9f5d1b92-a581-4134-8864-9bd98ff8ed97%2Fstage.glb"
+        rotation="0 90 0"
+        
+      ></a-gltf-model>
+
+      <a-icosahedron
+        position="0.3 1 -4"
+        id="1"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-2.07596 0.56155 0.42632"
+        id="2"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-2.07596 0.56155 4.72346"
+        id="3"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-12.99226 0.56155 4.72346"
+        id="4"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-1.12192 0.56155 12.86317"
+        id="5"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+
+      <a-icosahedron
+        position="9.92778 0.56155 12.86317"
+        id="7"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="9.92778 0.56155 3.63989"
+        id="8"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="9.92778 0.56155 -10.38805"
+        id="9"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-7.8936 0.56155 -10.38805"
+        id="10"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-16.42717 0.56155 -10.38805"
+        id="11"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-18.67519 -0.54459 -24.69009"
+        id="12"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-93.2791 3.52178 37.72584"
+        id="a"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-93.2791 3.52178 12.33415"
+        id="b"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-93.2791 3.52178 25.57354"
+        id="c"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-80.68231 3.52178 25.57354"
+        id="d"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+
+      <a-icosahedron
+        position="-73.66567 3.52178 25.57354"
+        id="z"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-64.02984 3.52178 25.57354"
+        id="e"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-48.93737 3.52178 25.57354"
+        id="f"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-35.86908 0.15512 25.57354"
+        id="g"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-35.86908 0.15512 11.33694"
+        id="h"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+      <a-icosahedron
+        position="-23.89624 0.15512 11.33694"
+        id="i"
+        color="#FF926B"
+        radius="0.3"
+        travel-node="transition: move"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        sound="on: click; src: #click-sound"
+      ></a-icosahedron>
+
+      <a-sky src="#dawn"></a-sky>
+
+      <a-light type="ambient" color="#222"></a-light>
+      <a-light type="point" position="1 2 1"></a-light>
+      <a-light type="point" position="-2 2 1"></a-light>
+    </a-scene>
+
+    <script>
+      // On mobile remove elements that are resource heavy
+      var isMobile = AFRAME.utils.device.isMobile();
+
+      if (isMobile) {
+        var particles = document.getElementById("particles");
+        particles.parentNode.removeChild(particles);
+      }
+
+      // Define custom schema for syncing avatar color, set by random-color
+      NAF.schemas.add({
+        template: "#avatar-template",
+        components: [
+          "position",
+          "rotation",
+          {
+            selector: ".head",
+            component: "material",
+            property: "color"
+          }
+        ]
+      });
+    </script>
+    <script src="assets/js/plugin.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

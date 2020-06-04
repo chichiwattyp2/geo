@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>XR Drag and Drop Video</title>
+    <meta name="description" content="A-Frame local video player" />
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <!-- illumination component done by Alfredo, cf https://medium.com/@alfredos/ -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="js/scripts.js"></script>
+    <link rel="stylesheet" href="assets/css/plugin.css" />
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="assets/css/dark.css" />
+  </head>
+  <body
+    ondragenter="event.stopPropagation(); event.preventDefault();"
+    ondragover="event.stopPropagation(); event.preventDefault();"
+    ondrop="event.stopPropagation(); event.preventDefault(); dodrop(event);"
+  >
+    <!-- via https://jsbin.com/hiqasek/edit?html,js,output -->
+    <script>
+      function dodrop(event) {
+        var dt = event.dataTransfer;
+        var files = dt.files;
+
+        var fileURL = URL.createObjectURL(files[0]);
+        var videoNode = document.querySelector("video");
+        videoNode.src = fileURL;
+      }
+    </script>
+    <div id="preloader">
+      <div class="loader-logo text-center">
+        <img src="https://beta-supercruisr.neocities.org/assets/img/logo.png" alt="" />
+        <p>LOADING SUPERCRUISR</p>
+      </div>
+    </div>
+    <nav>
+      <div class="logo">
+        <a href="index.html"><img src="https://beta-supercruisr.neocities.org/assets/img/logo.png" alt="logo"/></a>
+      </div>
+      <div class="toggle-btn">
+        <div class="burger-menu">
+          <span class="one"></span>
+          <span class="two"></span>
+          <span class="tre"></span>
+        </div>
+      </div>
+
+      <div class="bg-nav"></div>
+
+      <div class="manu-container">
+        <div class="menu">
+          <div class="data">
+            <div class="container">
+              <div id="UI">
+                <div id="mobilesupport" style="display:none;">
+                  <!-- actually useful on mobile, should be shown there -->
+                  <span
+                    >WebVR video player. Select your video file:
+                    <div id="message"></div
+                  ></span>
+                  <input type="file" accept="video/*" />
+                  <a href="#" onclick="mobileStart()" id="playbutton"
+                    >Play video</a
+                  >
+                </div>
+                <input
+                  type="checkbox"
+                  id="threesixty"
+                  name="threesixty"
+                  value="false"
+                  onchange="switchTo360()"
+                />
+                360 video (equirectangular) or pass the video via URL (<a
+                  href="?src=https://vatelier.net/MyDemo/LocalVideoPlayer/MozDevRoadShow-Singapore.mp4"
+                  >example</a
+                >)<br />
+                particularly pratical for mobile. Pop corn ready? All set? then
+                <a
+                  href="#"
+                  onclick="document.querySelector('a-scene').enterVR();"
+                  >enter VR</a
+                >
+              </div>
+              <div class="loader-image">
+                <img src="https://beta-supercruisr.neocities.org/assets/blackloader.png" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <script>
+      function switchTo360() {
+        if (document.getElementById("threesixty").checked) {
+          document.querySelector("a-videosphere").setAttribute("visible", true);
+          document.querySelector("a-video").setAttribute("visible", false);
+          document.querySelector("a-sky").setAttribute("visible", false);
+          document.querySelector("#room").setAttribute("visible", false);
+        } else {
+          document
+            .querySelector("a-videosphere")
+            .setAttribute("visible", false);
+          document.querySelector("a-video").setAttribute("visible", true);
+          document.querySelector("a-sky").setAttribute("visible", true);
+          document.querySelector("#room").setAttribute("visible", true);
+        }
+      }
+
+      function mobileStart() {
+        var videoEl = document.querySelector("#rpo");
+        videoEl.play();
+        var playbutton = document.querySelector("#interface");
+        playbutton.style.display = "none";
+      }
+
+      if (AFRAME.utils.device.isMobile()) {
+        var playbutton = document.querySelector("#mobilesupport");
+        playbutton.style.display = "block";
+      }
+
+      // via https://stackoverflow.com/questions/8885701/play-local-hard-drive-video-file-with-html5-video-tag
+      // alt solution https://github.com/Utopiah/vrify
+      (function localFileVideoPlayer() {
+        "use strict";
+        var URL = window.URL || window.webkitURL;
+        var displayMessage = function(message, isError) {
+          var element = document.querySelector("#message");
+          element.innerHTML = message;
+          element.className = isError ? "error" : "info";
+        };
+        var playSelectedFile = function(event) {
+          var file = this.files[0];
+          var type = file.type;
+          var videoNode = document.querySelector("video");
+          var canPlay = videoNode.canPlayType(type);
+          if (canPlay === "") canPlay = "no";
+          var message = 'Can play type "' + type + '": ' + canPlay;
+          var isError = canPlay === "no";
+          displayMessage(message, isError);
+
+          if (isError) {
+            return;
+          }
+
+          var fileURL = URL.createObjectURL(file);
+          videoNode.src = fileURL;
+        };
+        var inputNode = document.querySelector("input");
+        inputNode.addEventListener("change", playSelectedFile, false);
+      })();
+
+      // load via URL, works locally using http-serv --cors in the folder of your videos
+      AFRAME.registerComponent("src-via-url", {
+        init: function() {
+          var src = AFRAME.utils.getUrlParameter("src");
+          if (src) {
+            var videoEl = this.el.getAttribute("src");
+            document.querySelector(videoEl).setAttribute("src", src);
+          }
+        }
+      });
+      AFRAME.registerComponent("hide-ui-vr", {
+        init: function() {
+          function hideUI() {
+            document.querySelector("#UI").style.display = "none";
+          }
+          AFRAME.scenes[0].addEventListener("enter-vr", hideUI);
+        }
+      });
+
+      // seems to have no effect
+      window.setTimeout(function() {
+        window.addEventListener(
+          "drop",
+          function(event) {
+            // prevent default action (open as link for some elements)
+            event.stopPropagation();
+            event.preventDefault();
+            alert(event);
+          },
+          false
+        );
+      }, 5000);
+    </script>
+    <a-scene
+      hide-ui-vr
+      vr-mode-ui="enabled: true"
+      loading-screen="backgroundColor: #212121"
+    >
+      <!-- opt https://github.com/oscarmarinmiro/aframe-video-controls -->
+      <a-assets>
+        <!-- <video loop autoplay="true" src="http://localhost:8080/rnms3e5.webm" id="rpo"></video> -->
+        <video loop autoplay="true" src="" id="rpo"></video>
+        <a-asset-item id="coference" src="https://beta-supercruisr.neocities.org/assets/coference.glb"></a-asset-item>
+        <img
+          id="dawn"
+          crossorigin="anonymous"
+          src="https://cdn.glitch.com/9f5d1b92-a581-4134-8864-9bd98ff8ed97%2Fdawn.jpeg"
+        />
+      </a-assets>
+      <a-video
+        src-via-url=""
+        src="#rpo"
+        width="1.6"
+        position="1.86675 1.6 -11.87869"
+        illumination=""
+        material=""
+        geometry=""
+        scale="3 3 1"
+      ></a-video>
+      <a-sky src="#dawn"></a-sky>
+      <a-videosphere src="#rpo" visible="false"></a-videosphere>
+
+      <a-camera postion="0 1.6 0"></a-camera>
+      <a-entity
+        light="type: hemisphere; color: #33C; groundColor: #fcba03; intensity: 2"
+      ></a-entity>
+      <a-gltf-model
+        src="#coference"
+        position="1.92462 -1.10968 -2.0929"
+        scale="0.018 0.018 0.018"
+        gltf-model="https://beta-supercruisr.neocities.org/assets/coference.glb"
+        rotation="0 180 0"
+      >
+      </a-gltf-model>
+    </a-scene>
+    <script src="assets/js/plugin.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
