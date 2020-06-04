@@ -1,0 +1,281 @@
+<html>
+  <head>
+    <meta name="description" content="The Virtual Conference" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Super-XR-2020</title>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
+    <script src="easyrtc/easyrtc.js"></script>
+    <script src="https://unpkg.com/networked-aframe@^0.6.0/dist/networked-aframe.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="js/function.js"></script>
+
+    <script>
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(function(stream) {
+          console.log("Mic Accesible");
+        })
+        .catch(function(err) {
+          console.log("Mic Declined");
+        });
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="css/virtual-con.css" />
+  </head>
+  <body>
+    <a-scene
+      id="theScene"
+      networked-scene="
+      room: audio;
+      adapter: easyrtc;
+      audio: true;
+      debug: true;
+    "
+      vr-mode-ui="enabled: false"
+    >
+      <a-assets>
+        <template id="speaker-template">
+          <a-box height="0.2" width="0.2" depth="0.2" networked-audio-source>
+            <a-sphere
+              radius="0.08"
+              color="#606060"
+              position="0 0 -0.05"
+            ></a-sphere>
+          </a-box>
+        </template>
+
+        <template id="hand-template">
+          <a-entity>
+            <a-box scale="0.1 0.1 0.1"></a-box>
+          </a-entity>
+        </template>
+      </a-assets>
+
+      <a-entity id="initCamera" camera position="0 1.6 1"></a-entity>
+
+      <a-sky color="#000"></a-sky>
+      <a-entity id="screens">
+        <!-- <a-video id="videoScreen"  src="https://cdn.glitch.com/bbf84ee2-4426-4f2e-9c16-02dde29ef5a3%2Fcasual_idiot.mp4?v=1585082288448" position="0 5.22 -4.29" height="3.8" width="6.5" controls webkit-playsinline ad-outlet="video" autoplay="true" loop="true"></a-video> -->
+        <a-image
+          id="mainScreen"
+          src="https://beta-supercruisr.neocities.org/menu/VWC-Screen1.jpg"
+          position="0 5.22 -4.3"
+          height="3.8"
+          width="6.5"
+        ></a-image>
+        <a-image
+          id="monitorScreen"
+          src="https://beta-supercruisr.neocities.org/menu/VWC-Screen1.jpg"
+          position="0 3.5 5"
+          rotation="0 180 0"
+          height="3.8"
+          width="6.5"
+        ></a-image>
+        <a-image
+          id="podium-1"
+          src="https://beta-supercruisr.neocities.org/menu/Speaker-Chris.png"
+          position="-1.85 1.48 -2.1"
+          height="3.8"
+          width="6.5"
+          geometry="height:0.84;width:0.43"
+          rotation="0 20 0"
+        ></a-image>
+        <a-image
+          id="podium-2"
+          src="https://beta-supercruisr.neocities.org/menu/Speaker-Chris.png"
+          position="-0.97 1.48 -2.355"
+          height="3.8"
+          width="6.5"
+          geometry="height:0.84;width:0.43"
+          rotation="0 10 0"
+        ></a-image>
+        <a-image
+          id="podium-3"
+          src="https://beta-supercruisr.neocities.org/menu/Speaker-Chris.png"
+          position="0 1.484 -2.436"
+          height="3.8"
+          width="6.5"
+          geometry="width:0.43;height:0.84"
+        ></a-image>
+        <a-image
+          id="podium-4"
+          src="https://beta-supercruisr.neocities.org/menu/Speaker-Chris.png"
+          position="0.97 1.48 -2.355"
+          height="3.8"
+          width="6.5"
+          geometry="height:0.84;width:0.43"
+          rotation="0 -10 0"
+        ></a-image>
+        <a-image
+          id="podium-5"
+          src="https://beta-supercruisr.neocities.org/menu/Speaker-Chris.png"
+          position="1.85 1.48 -2.1"
+          height="3.8"
+          width="6.5"
+          geometry="height:0.84;width:0.43"
+          rotation="0 -20 0"
+        ></a-image>
+        <a-image
+          id="leftScreen"
+          src="https://beta-supercruisr.neocities.org/menu/VWC-SideBanner.jpg"
+          position="-4.51 4.17 -3.69"
+          height="3.8"
+          width="6.5"
+          geometry="height:2.75;width:1.37"
+          rotation="0 27 0"
+        ></a-image>
+        <a-image
+          id="rightScreen"
+          src="https://beta-supercruisr.neocities.org/menu/VWC-SideBanner.jpg"
+          position="4.51 4.17 -3.69"
+          height="3.8"
+          width="6.5"
+          geometry="height:2.75;width:1.37"
+          rotation="0 -27 0"
+        ></a-image>
+
+        <a-image
+          id="notes-1"
+          src="https://beta-supercruisr.neocities.org/menu/Notes.jpg"
+          position="0 1.91 -2.66"
+          rotation="-53 180 0"
+          geometry="width:0.25;height:0.4"
+        ></a-image>
+        <a-image
+          id="notes-2"
+          src="https://beta-supercruisr.neocities.org/menu/Notes.jpg"
+          position="-1.018 1.91 -2.578"
+          rotation="-53 191 0"
+          geometry="height:0.4;width:0.25"
+        ></a-image>
+        <a-image
+          id="notes-3"
+          src="https://beta-supercruisr.neocities.org/menu/Notes.jpg"
+          position="1.018 1.91 -2.578"
+          rotation="-53 170 0"
+          geometry="height:0.4;width:0.25"
+        ></a-image>
+        <a-image
+          id="notes-4"
+          src="https://beta-supercruisr.neocities.org/menu/Notes.jpg"
+          position="1.927 1.91 -2.312"
+          rotation="-53 159 0"
+          geometry="height:0.4;width:0.25"
+        ></a-image>
+        <a-image
+          id="notes-5"
+          src="https://beta-supercruisr.neocities.org/menu/Notes.jpg"
+          position="-1.927 1.91 -2.312"
+          rotation="-53 200 0"
+          geometry="height:0.4;width:0.25"
+        ></a-image>
+      </a-entity>
+
+      <a-gltf-model
+        id="mainStage"
+        position="0 1 -5"
+        src="https://beta-supercruisr.neocities.org/menu/stagev5.gltf"
+      ></a-gltf-model>
+    </a-scene>
+
+    <div
+      id="flatSite"
+      style="width: 100%; height: 100%; position: absolute; top: 0px; visibility:;"
+    >
+      <div class="box" id="welcomeScreen">
+        <div id="pleaseAccept" class="pleaseAccept">
+          <p>
+            Please accept permissions before continuing
+          </p>
+          <br />
+          <button class="myButton" onclick="accepted();">
+            Got it
+          </button>
+        </div>
+
+        <h1>WELCOME!</h1>
+        <image
+          style="max-width:200px"
+          src="https://beta-supercruisr.neocities.org/menu/VWC_logo-02.png"
+        ></image>
+        <h2>JHB XR 2020</h2>
+        <p>Are you here as a speaker or viewer?</p>
+        <button class="mybutton" id="btn1" onclick="makeSpeaker()">
+          speaker
+        </button>
+        <br />
+        <button class="mybutton" id="btn2" onclick="makeAudience()">
+          viewer
+        </button>
+        <br />
+        <a href="https://www.mozilla.org/en-US/firefox/new/" target="_blank"
+          ><image
+            style="max-width:150px; margin-top:10px;"
+            src="https://cdn.glitch.com/bbf84ee2-4426-4f2e-9c16-02dde29ef5a3%2Ffirefox-01.png?v=1585153035990"
+          ></image
+        ></a>
+        <br />
+        <p onclick="helper()" class="helpLink"><a>[ Having trouble? ]</a></p>
+      </div>
+
+      <!-- The Modal -->
+      <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h1>
+            Having Trouble?
+          </h1>
+          <p>
+            WebXR is an exciting new way of experiencing the webriencing the
+            web. But being so cutting edge can come with some quirks.
+          </p>
+          <p>
+            If you are having trouble joining the session in VR, try the
+            following to get things working:
+          </p>
+          <p style="line-height:2em;">
+            1. Make sure you have accepted mic and VR access<br />
+            2. Exit VR mode on your device<br />
+            3. Place your headset in the center of your play area<br />
+            4. Start your VR headset<br />
+            5. Refresh the page<br />
+          </p>
+          <p>
+            If you are still having trouble, try restarting your browser and
+            repeat the above steps.
+          </p>
+        </div>
+        <script>
+          // ---flat UI---
+          // Get the modal
+          var modal = document.getElementById("myModal");
+
+          // Get the button that opens the modal
+          var helpLink = document.getElementById("helpLink");
+
+          // Get the <span> element that closes the modal
+          var span = document.getElementsByClassName("close")[0];
+
+          // When the user clicks on the button, open the modal
+          function helper() {
+            modal.style.display = "block";
+          }
+
+          // When the user clicks on <span> (x), close the modal
+          span.onclick = function() {
+            modal.style.display = "none";
+          };
+
+          // When the user clicks anywhere outside of the modal, close it
+          window.onclick = function(event) {
+            if (event.target == modal) {
+              modal.style.display = "none";
+            }
+          };
+        </script>
+      </div>
+    </div>
+  </body>
+</html>

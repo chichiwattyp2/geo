@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Super-Studio</title>
+    <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true" />
+    <script src="https://cdn.jsdelivr.net/npm/jzz"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jzz-synth-tiny"></script>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+
+    <script src="https://unpkg.com/aframe-aabb-collider-component@3.1.0/dist/aframe-aabb-collider-component.min.js"></script>
+    <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
+    <script src="https://unpkg.com/aframe-haptics-component/dist/aframe-haptics-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script>
+
+    <script src="js/last-position.js"></script>
+    <script src="https://unpkg.com/@tonejs/midi"></script>
+    <script type="text/javascript" src="https://unpkg.com/tone@13.4.9"></script>
+
+    <script src="js/instrumentsJSON.js"></script>
+   
+  </head>
+
+  <style>
+    .instruments {
+      background-color: #4B9CA6;
+      border: solid #307982 3px;
+      border-radius: 20px;
+      color: white;
+      padding: 2px;
+      margin: 2px;
+      box-shadow: 1px 1px 1px black;
+      text-shadow: 1px 1px 1px black;
+      min-width: 30px;
+      min-height: 30px;
+    }
+
+    .instruments:active {
+      background-color: #174146;
+      border: solid #0F2C2F 3px;
+    }
+
+    .instruments:hover {
+      background-color: #215C63;
+      border: solid #307982 3px;
+    }
+
+    .artists {
+      background-color: #4B9CA6;
+      border: solid #307982 3px;
+      border-radius: 20px;
+      color: white;
+      padding: 2px;
+      margin: 2px;
+      box-shadow: 1px 1px 1px black;
+      text-shadow: 1px 1px 1px black;
+    }
+
+    .artists:active {
+      background-color: #174146;
+      border: solid #0F2C2F 3px;
+    }
+
+    .artists:hover {
+      background-color: #215C63;
+      border: solid #307982 3px;
+    }
+
+    .ui {
+      background-color: #6937A2;
+      border: solid #6937A2 3px;
+      border-radius: 4px;
+      color: white;
+      padding: 5px;
+      margin: 2px;
+      box-shadow: 1px 1px 1px black;
+      text-shadow: 1px 1px 1px black;
+    }
+
+    .ui:active {
+      background-color: #613494;
+      border: solid #391D58 3px;
+    }
+
+    .ui:hover {
+      background-color: #4A2672;
+      border: solid #201032 3px;
+    }
+
+    .colors {
+      background-color: #DDDDDD;
+      border: solid #888888 1px;
+      border-radius: 20px;
+      color: white;
+      box-shadow: 1px 1px 1px black;
+      text-shadow: 1px 1px 1px black;
+      width: 10px;
+      height: 10px;
+    }
+
+    .colors:active {
+      background-color: #EEEEEE;
+      border: solid #999999 3px;
+    }
+
+    .colors:hover {
+      background-color: #FFFFFF;
+      border: solid #AAAAAA 3px;
+    }
+
+    .small {
+      width: 200px;
+    }
+
+    .medium {
+      width: 500px;
+    }
+
+    .large {
+      width: 1200px;
+    }
+
+    h1 {
+      font-size: 16px;
+      font-family: sans-serif;
+      color: white;
+      padding: 0px;
+      margin: 0px;
+    }
+
+    h2 {
+      font-size: 12px;
+      font-family: sans-serif;
+      color: white;
+      padding: 0px;
+      margin: 0px;
+    }
+
+    .inliner {
+      display: inline-block;
+    }
+
+    ul {
+      font-size: 8px;
+      font-family: sans-serif;
+      color: white;
+      padding: 0px;
+      margin: 0px;
+    }
+
+    li {
+      padding: 0px;
+      margin: 0px;
+    }
+
+    .iframewrapper {
+      z-index: 999999;
+      position: absolute;
+    }
+  </style>
+
+  <body>
+    <div class="iframewrapper">
+      <h1>Popular Backing Tracks</h1>
+      <iframe
+        width="200"
+        height="100"
+        src="https://www.youtube.com/embed/8H_5GcUxMHM"
+        frameborder="0"
+        allow="accelerometer; encrypted-media; picture-in-picture"
+      ></iframe>
+      <iframe
+        width="200"
+        height="100"
+        src="https://www.youtube.com/embed/TI6ZNE5PwXw"
+        frameborder="0"
+        allow="accelerometer; encrypted-media; picture-in-picture"
+      ></iframe>
+      <iframe
+        width="200"
+        height="100"
+        src="https://www.youtube.com/embed/7H7Xg6U7P5g"
+        frameborder="0"
+        allow="accelerometer; encrypted-media; picture-in-picture"
+      ></iframe>
+      <iframe
+        width="200"
+        height="100"
+        src="https://www.youtube.com/embed/Xjf2kiDO19Y"
+        frameborder="0"
+        allow="accelerometer; encrypted-media; picture-in-picture"
+      ></iframe>
+      <iframe
+        width="200"
+        height="100"
+        src="https://www.youtube.com/embed/bmEgQhFIYG8"
+        frameborder="0"
+        allow="accelerometer; encrypted-media; picture-in-picture"
+      ></iframe>
+      <iframe
+        width="200"
+        height="100"
+        src="https://www.youtube.com/embed/iyHDHYrdWPs"
+        frameborder="0"
+        allow="accelerometer; encrypted-media; picture-in-picture"
+      ></iframe>
+    </div>
+
+    <a-scene
+      cursor="rayOrigin:mouse"
+      renderer="antialias: true;
+                   colorManagement: true;
+                   sortObjects: true;
+                   physicallyCorrectLights: true;"
+             background="color: black;"
+    >
+      <a-assets>
+        <a-asset-item
+          id="playa"
+          src="https://beta-supercruisr.neocities.org/menu/keys.gltf"
+        ></a-asset-item>
+
+        <img
+          id="nota.jpg"
+          crossorigin="anonymous"
+          src="https://beta-supercruisr.neocities.org/assets/nota.jpg"
+        />
+      </a-assets>
+      <!--<a-entity gltf-model="#playa"></a-entity>
+    <a-text value="Model: Island - By Google Poly" color="#362204" rotation="0 0 90" position="-1.378 -0.18 -8.419"></a-text>-->
+
+      <a-sky color="#333333"></a-sky>
+
+      <a-entity id="themidi">
+        <a-image
+          material="shader:flat;src: https://beta-supercruisr.neocities.org/assets/instructions.png"
+          position="1.5 2 -1.182"
+          rotation="0 -45 0"
+        ></a-image>
+
+        <a-entity id="rig">
+          <a-entity
+            camera
+            look-controls
+            wasd-controls
+                    touch-controls
+            position="0 1.7 0.5"
+          ></a-entity>
+
+          <a-cursor></a-cursor>
+          <a-entity
+            id="rightHand"
+            laser-controls="model: false"
+            check-velocity=""
+            raycaster="objects: .screen; far: 2"
+            line="color: white; opacity: 0.1"
+            haptics=""
+            daydream-controls="hand: right; model: false"
+            gearvr-controls="hand: right; model: false"
+            magicleap-controls="hand: right; model: false"
+            oculus-go-controls="hand: right; model: false"
+            oculus-touch-controls="hand: right; model: false"
+            vive-controls="hand: right; model: false"
+            vive-focus-controls="hand: right; model: false"
+            windows-motion-controls="model: false"
+            generic-tracked-controller-controls="hand: right"
+            tracked-controls-webxr=""
+            tracked-controls=""
+            visible=""
+          >
+            <a-text
+              color="white"
+              id="debug"
+              scale="0.1 0.1 0.1"
+              text=""
+            ></a-text>
+            <a-text
+              color="white"
+              align="center"
+              id="rightText"
+              scale="0.1 0.1 0.1"
+              position="0 0 -0.1"
+              text=""
+            ></a-text>
+            <a-entity
+              id="mallet1"
+              class="mallet"
+              position="-0.00506 -0.01731 0"
+              rotation="-90 0 0"
+              animation__20grados="property: rotation; from: -90 0; to: -90 0 10; dur: 100; startEvents: separar1"
+              animation__40grados="property: rotation; from: -90 0; to: -90 0 20; dur: 100; startEvents: separar2"
+              animation__reset="property: rotation; to: -90 0 0; dur: 100; startEvents: reset"
+              ><a-cylinder
+                segments-radial="8"
+                segments-height="1"
+                radius="0.005"
+                height="0.3"
+                color="#654321"
+                position="0 0.15 0"
+                geometry=""
+                material=""
+              ></a-cylinder
+              ><a-cylinder
+                segments-radial="8"
+                segments-height="1"
+                radius="0.01"
+                height="0.03"
+                color="#FFFF88"
+                position="0 0.3 0"
+                geometry=""
+                material=""
+              ></a-cylinder
+              ><a-box
+                visible="false"
+                id="rightmallethit1"
+                color="purple"
+                position="0 0.3 0"
+                width="0.015"
+                height="0.015"
+                depth="0.015"
+                last-position=""
+                aabb-collider="objects: .note; interval: 1"
+                material=""
+                geometry=""
+                pasery="-0.017309999999999933"
+                paserx="-0.00506"
+                posery="-0.017309999999999933"
+                poserx="-0.00506"
+              ></a-box></a-entity
+            ><a-entity
+              id="mallet2"
+              class="mallet"
+              position="-0.00506 -0.01731 0"
+              rotation="-90 0 0"
+              animation__20grados="property: rotation; from: -90 0; to: -90 0 -10; dur: 100; startEvents: separar1"
+              animation__40grados="property: rotation; from: -90 0; to: -90 0 -20; dur: 100; startEvents: separar2"
+              animation__reset="property: rotation; to: -90 0 0; dur: 100; startEvents: reset"
+              ><a-cylinder
+                segments-radial="8"
+                segments-height="1"
+                radius="0.005"
+                height="0.3"
+                color="#654321"
+                position="0 0.15 0"
+                geometry=""
+                material=""
+              ></a-cylinder
+              ><a-cylinder
+                segments-radial="8"
+                segments-height="1"
+                radius="0.01"
+                height="0.03"
+                color="#FFFF88"
+                position="0 0.3 0"
+                geometry=""
+                material=""
+              ></a-cylinder
+              ><a-box
+                visible="false"
+                id="rightmallethit2"
+                color="purple"
+                position="0 0.3 0"
+                width="0.015"
+                height="0.015"
+                depth="0.015"
+                last-position=""
+                aabb-collider="objects: .note; interval: 1"
+                material=""
+                geometry=""
+                pasery="-0.017309999999999933"
+                paserx="-0.00506"
+                posery="-0.017309999999999933"
+                poserx="-0.00506"
+              ></a-box></a-entity
+            ><a-entity position="" scale="0.5 0.5 0.5"
+              ><a-entity rotation="-90 0 0" position="0 0.05 0" id="mode0"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#888888"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Major"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation=""
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity
+                rotation="-90 0 -29.999999999999996"
+                position="0 0.05 0"
+                id="mode1"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#888888"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Minor"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 29.999999999999996"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity
+                rotation="-90 0 -59.99999999999999"
+                position="0 0.05 0"
+                id="mode2"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#888888"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Major 7"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 59.99999999999999"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -90" position="0 0.05 0" id="mode3"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#888888"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Diminished"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 90"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity
+                rotation="-90 0 -119.99999999999999"
+                position="0 0.05 0"
+                id="mode4"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#444444"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Ionian"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 119.99999999999999"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -150" position="0 0.05 0" id="mode5"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#444444"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Dorian"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 150"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -180" position="0 0.05 0" id="mode6"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#444444"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Phrygian"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 180"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity
+                rotation="-90 0 -210.00000000000003"
+                position="0 0.05 0"
+                id="mode7"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#444444"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Lydian"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 210.00000000000003"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity
+                rotation="-90 0 -239.99999999999997"
+                position="0 0.05 0"
+                id="mode8"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#444444"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Mixolydian"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 239.99999999999997"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -270" position="0 0.05 0" id="mode9"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#444444"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Aeolian"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 270"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -300" position="0 0.05 0" id="mode10"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#444444"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Locrian"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 300"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -330" position="0 0.05 0" id="mode11"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#222222"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Pentatonic"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 330"
+                    text=""
+                  ></a-text></a-box></a-entity></a-entity
+          ></a-entity>
+
+          <a-entity
+            id="leftHand"
+            laser-controls="hand: left; model: false"
+            check-velocity=""
+            raycaster="far: 0"
+            line="color: white; opacity: 0.1"
+            haptics=""
+            daydream-controls="hand: left; model: false"
+            gearvr-controls="hand: left; model: false"
+            magicleap-controls="hand: left; model: false"
+            oculus-go-controls="hand: left; model: false"
+            oculus-touch-controls="model: false"
+            vive-controls="model: false"
+            vive-focus-controls="hand: left; model: false"
+            windows-motion-controls="hand: left; model: false"
+            generic-tracked-controller-controls="hand: left"
+            tracked-controls-webxr=""
+            tracked-controls=""
+          >
+            <a-text
+              color="white"
+              align="center"
+              id="leftText"
+              scale="0.1 0.1 0.1"
+              position="0 0 -0.1"
+              text=""
+            ></a-text>
+            <a-entity
+              htmlembed=""
+              position="0 0 0.133"
+              class="screen"
+              scale="0.2 0.2 0.2"
+              rotation="-90 180 180"
+              style="display: none; position: absolute; top: 0px; left: 0px; overflow: hidden;"
+            >
+              <div
+                style="font-family: sans-serif;text-align: center"
+                class="medium"
+              >
+                <h4 style="color:white">Length</h4>
+
+                <button class="ui" onclick="heightChanger(-.05);">--</button>
+                <button class="ui" onclick="heightChanger(-.01);">-</button>
+                <button class="ui" onclick="resetHeight();">Reset</button>
+                <button class="ui" onclick="heightChanger(.01);">+</button>
+                <button class="ui" onclick="heightChanger(.05);">++</button>
+
+                <h4 style="color:white">Width</h4>
+                <button class="ui" onclick="radiusChanger(-.01);">--</button>
+                <button class="ui" onclick="radiusChanger(-.005);">-</button>
+                <button class="ui" onclick="resetRadius();">Reset</button>
+                <button class="ui" onclick="radiusChanger(+.005);">+</button>
+                <button class="ui" onclick="radiusChanger(+.01);">++</button>
+
+                <h4 style="color:white">Angle</h4>
+                <button class="ui" onclick="angleChanger(-5);">--</button>
+                <button class="ui" onclick="angleChanger(-1);">-</button>
+                <button class="ui" onclick="resetAngle();">Reset</button>
+                <button class="ui" onclick="angleChanger(+1);">+</button>
+                <button class="ui" onclick="angleChanger(+5);">++</button>
+              </div>
+            </a-entity>
+            <a-entity
+              id="mallet3"
+              class="mallet"
+              position="-0.00506 -0.01731 0"
+              rotation="-90 0 0"
+              animation__20grados="property: rotation; from: -90 0; to: -90 0 10; dur: 100; startEvents: separar1"
+              animation__40grados="property: rotation; from: -90 0; to: -90 0 20; dur: 100; startEvents: separar2"
+              animation__reset="property: rotation; to: -90 0 0; dur: 100; startEvents: reset"
+              ><a-cylinder
+                segments-radial="8"
+                segments-height="1"
+                radius="0.005"
+                height="0.3"
+                color="#654321"
+                position="0 0.15 0"
+                geometry=""
+                material=""
+              ></a-cylinder
+              ><a-cylinder
+                segments-radial="8"
+                segments-height="1"
+                radius="0.01"
+                height="0.03"
+                color="#FFFF88"
+                position="0 0.3 0"
+                geometry=""
+                material=""
+              ></a-cylinder
+              ><a-box
+                visible="false"
+                id="leftmallethit1"
+                color="purple"
+                position="0 0.3 0"
+                width="0.015"
+                height="0.015"
+                depth="0.015"
+                last-position=""
+                aabb-collider="objects: .note; interval: 1"
+                material=""
+                geometry=""
+                pasery="-0.017309999999999933"
+                paserx="-0.00506"
+                posery="-0.017309999999999933"
+                poserx="-0.00506"
+              ></a-box></a-entity
+            ><a-entity
+              id="mallet4"
+              class="mallet"
+              position="-0.00506 -0.01731 0"
+              rotation="-90 0 0"
+              animation__20grados="property: rotation; from: -90 0; to: -90 0 -10; dur: 100; startEvents: separar1"
+              animation__40grados="property: rotation; from: -90 0; to: -90 0 -20; dur: 100; startEvents: separar2"
+              animation__reset="property: rotation; to: -90 0 0; dur: 100; startEvents: reset"
+              ><a-cylinder
+                segments-radial="8"
+                segments-height="1"
+                radius="0.005"
+                height="0.3"
+                color="#654321"
+                position="0 0.15 0"
+                geometry=""
+                material=""
+              ></a-cylinder
+              ><a-cylinder
+                segments-radial="8"
+                segments-height="1"
+                radius="0.01"
+                height="0.03"
+                color="#FFFF88"
+                position="0 0.3 0"
+                geometry=""
+                material=""
+              ></a-cylinder
+              ><a-box
+                visible="false"
+                id="leftmallethit2"
+                color="purple"
+                position="0 0.3 0"
+                width="0.015"
+                height="0.015"
+                depth="0.015"
+                last-position=""
+                aabb-collider="objects: .note; interval: 1"
+                material=""
+                geometry=""
+                pasery="-0.017309999999999933"
+                paserx="-0.00506"
+                posery="-0.017309999999999933"
+                poserx="-0.00506"
+              ></a-box></a-entity
+            ><a-entity position="" scale="0.5 0.5 0.5"
+              ><a-entity rotation="-90 0 0" position="0 0.05 0" id="tone0"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#FF00FF"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="C"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation=""
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity
+                rotation="-90 0 -29.999999999999996"
+                position="0 0.05 0"
+                id="tone1"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#999900"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="G"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 29.999999999999996"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity
+                rotation="-90 0 -59.99999999999999"
+                position="0 0.05 0"
+                id="tone2"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#800080"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="D"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 59.99999999999999"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -90" position="0 0.05 0" id="tone3"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#FFA500"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="A"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 90"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity
+                rotation="-90 0 -119.99999999999999"
+                position="0 0.05 0"
+                id="tone4"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#009999"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="E"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 119.99999999999999"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -150" position="0 0.05 0" id="tone5"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#FF0000"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="B"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 150"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -180" position="0 0.05 0" id="tone6"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#d1d63b"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="F#"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 180"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity
+                rotation="-90 0 -210.00000000000003"
+                position="0 0.05 0"
+                id="tone7"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#9c004a"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Db"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 210.00000000000003"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity
+                rotation="-90 0 -239.99999999999997"
+                position="0 0.05 0"
+                id="tone8"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#ffae42"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Ab"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 239.99999999999997"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -270" position="0 0.05 0" id="tone9"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#8b72be"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Eb"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 270"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -300" position="0 0.05 0" id="tone10"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#cd4327"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="Bb"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 300"
+                    text=""
+                  ></a-text></a-box></a-entity
+              ><a-entity rotation="-90 0 -330" position="0 0.05 0" id="tone11"
+                ><a-box
+                  width=".06"
+                  height=".06"
+                  depth=".005"
+                  position="0 0.2 0"
+                  color="#009900"
+                  geometry=""
+                  material=""
+                  ><a-text
+                    value="F"
+                    scale="0.1 0.1 0.1"
+                    position="0 0 0.01"
+                    align="center"
+                    rotation="0 0 330"
+                    text=""
+                  ></a-text></a-box></a-entity></a-entity
+          ></a-entity>
+        </a-entity>
+      
+
+        <a-entity position="-1.2 0.8 -0.6" id="piano"></a-entity>
+        <a-entity
+          id="heroContainer"
+          position="-1.2 1.271 -0.607"
+          rotation="-45 0 0"
+        >
+          <a-entity id="hero"></a-entity>
+        </a-entity>
+
+        <a-entity
+          htmlembed
+          position="0 1.5 -0.771"
+          scale=".4 .4 .4"
+          rotation="0 0 0"
+          class="screen"
+        >
+          <div class="small" style="text-align:center">
+            <button class="instruments" onclick="movePiano(.01)">▲</button
+            ><br />
+            <h2>Height</h2>
+            <button class="instruments" onclick="movePiano(-.01)">▼</button>
+          </div>
+        </a-entity>
+
+        <a-entity
+          htmlembed
+          position="-.5 1.5 -0.771"
+          scale=".4 .4 .4"
+          rotation="0 0 0"
+          class="screen"
+        >
+        </a-entity>
+
+        <a-entity
+          id="pianoMenus"
+          htmlembed
+          position="0 1.143 -0.771"
+          scale=".4 .4 .4"
+          rotation="-69 0 0"
+          class="screen"
+        >
+          <div class="large" id="contenedorPiano">
+            <div style="width:20%; display:inline-block; text-align:left;">
+              <ul>
+                <li>000 - 007 Piano</li>
+                <li>008 - 015 Chromatic Percussion</li>
+                <li>016 - 023 Organ</li>
+                <li>024 - 031 Guitar</li>
+                <li>032 - 039 Bass</li>
+                <li>040 - 047 Strings</li>
+                <li>048 - 055 Ensemble</li>
+                <li>056 - 063 Brass</li>
+                <li>064 - 071 Reed</li>
+                <li>072 - 079 Pipe</li>
+                <li>080 - 087 Synth Lead</li>
+                <li>088 - 095 Synth Pad</li>
+                <li>096 - 103 Synth Effects</li>
+                <li>104 - 111 Ethnic</li>
+                <li>112 - 119 Percussive</li>
+                <li>120 - 127 Sound Effects</li>
+              </ul>
+            </div>
+
+            <div style="width:20%; display:inline-block; text-align:center;">
+              <h1 id="piano-family">Chromatic Percussion</h1>
+              <h2 id="piano-instrument">8 Celesta</h2>
+              <button class="instruments" onclick="pianoNumber(1)">1</button>
+              <button class="instruments" onclick="pianoNumber(2)">2</button>
+              <button class="instruments" onclick="pianoNumber(3)">3</button
+              ><br />
+              <button class="instruments" onclick="pianoNumber(4)">4</button>
+              <button class="instruments" onclick="pianoNumber(5)">5</button>
+              <button class="instruments" onclick="pianoNumber(6)">6</button
+              ><br />
+              <button class="instruments" onclick="pianoNumber(7)">7</button>
+              <button class="instruments" onclick="pianoNumber(8)">8</button>
+              <button class="instruments" onclick="pianoNumber(9)">9</button
+              ><br />
+              <button class="instruments" onclick="pianoNumber('minus')">
+                -
+              </button>
+              <button class="instruments" onclick="pianoNumber(0)">0</button>
+              <button class="instruments" onclick="pianoNumber('plus')">
+                +
+              </button>
+            </div>
+
+            <div style="width:20%; display:inline-block; text-align:center">
+              <button class="instruments" onclick="changeNoteDuration(-10)">
+                -
+              </button>
+              <h2 class="inliner">Note Duration</h2>
+              <button class="instruments" onclick="changeNoteDuration(10)">
+                +
+              </button>
+              <br />
+
+              <button
+                class="instruments"
+                onclick="modifyValue('espacioInternotal',.05,false)"
+              >
+                -
+              </button>
+              <h2 class="inliner">Note Space</h2>
+              <button
+                class="instruments"
+                onclick="modifyValue('espacioInternotal',.05,true)"
+              >
+                +</button
+              ><br />
+
+              <button
+                class="instruments"
+                onclick="modifyValue('anchoNotas',.001,false)"
+              >
+                -
+              </button>
+              <h2 class="inliner">Note Width</h2>
+              <button
+                class="instruments"
+                onclick="modifyValue('anchoNotas',.001,true)"
+              >
+                +</button
+              ><br />
+
+              <button class="instruments" onclick="myToucher(false)">✕</button>
+              <h2 class="inliner">Touch</h2>
+              <button class="instruments" onclick="myToucher(true)">✓</button
+              ><br />
+
+              <button class="instruments" onclick="myHolder(false)">✕</button>
+              <h2 class="inliner">Hold</h2>
+              <button class="instruments" onclick="myHolder(true)">✓</button
+              ><br />
+            </div>
+
+            <div style="width:20%; display:inline-block; text-align:center">
+              <h2 class="inliner">Midi (Experimental)</h2>
+              <br />
+
+              <button class="instruments" onclick="playMidi()">Play</button
+              ><br />
+
+              <button class="instruments" onclick="stopMidi()">Stop</button
+              ><br />
+
+              <button class="instruments" onclick="changeSeparation(200)">
+                -
+              </button>
+              <h2 class="inliner">Note Speed</h2>
+              <button class="instruments" onclick="changeSeparation(-200)">
+                +
+              </button>
+              <h2 class="inliner" id="separation"></h2>
+              <br />
+
+              <button class="instruments" onclick="changeSpeed(100)">-</button>
+              <h2 class="inliner">Music Speed</h2>
+              <button class="instruments" onclick="changeSpeed(-100)">+</button>
+              <h2 class="inliner" id="speed"></h2>
+              <br />
+
+              <h2 class="inliner">natural color</h2>
+              <br />
+              <button
+                class="colors"
+                style="background-color:#000"
+                onclick="modifyValue('blancas','#000')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#FFF"
+                onclick="modifyValue('blancas','#FFF')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#00F"
+                onclick="modifyValue('blancas','#00F')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#0F0"
+                onclick="modifyValue('blancas','#0F0')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#F00"
+                onclick="modifyValue('blancas','#F00')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#FF0"
+                onclick="modifyValue('blancas','#FF0')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#0FF"
+                onclick="modifyValue('blancas','#0FF')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#F0F"
+                onclick="modifyValue('blancas','#F0F')"
+              ></button
+              ><br />
+
+              <h2 class="inliner">sharps color</h2>
+              <br />
+              <button
+                class="colors"
+                style="background-color:#000"
+                onclick="modifyValue('negras','#000')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#FFF"
+                onclick="modifyValue('negras','#FFF')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#00F"
+                onclick="modifyValue('negras','#00F')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#0F0"
+                onclick="modifyValue('negras','#0F0')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#F00"
+                onclick="modifyValue('negras','#F00')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#FF0"
+                onclick="modifyValue('negras','#FF0')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#0FF"
+                onclick="modifyValue('negras','#0FF')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#F0F"
+                onclick="modifyValue('negras','#F0F')"
+              ></button
+              ><br />
+
+              <h2 class="inliner">active color</h2>
+              <br />
+              <button
+                class="colors"
+                style="background-color:#000"
+                onclick="modifyValue('played','#000')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#FFF"
+                onclick="modifyValue('played','#FFF')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#00F"
+                onclick="modifyValue('played','#00F')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#0F0"
+                onclick="modifyValue('played','#0F0')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#F00"
+                onclick="modifyValue('played','#F00')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#FF0"
+                onclick="modifyValue('played','#FF0')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#0FF"
+                onclick="modifyValue('played','#0FF')"
+              ></button>
+              <button
+                class="colors"
+                style="background-color:#F0F"
+                onclick="modifyValue('played','#F0F')"
+              ></button
+              ><br />
+            </div>
+          </div>
+        </a-entity>
+
+        <a-entity
+          id="songPanel"
+          htmlembed
+          position="1 1.147 -0.771"
+          scale=".4 .4 .4"
+          rotation="-69 0 0"
+          class="screen"
+        >
+          <div class="medium" id="musicas">
+            <div style="display:inline-block; text-align:left">
+              <h1 id="genreName">Genre</h1>
+              <h2 id="songName">Song Name</h2>
+              <br />
+
+              <button class="artists" onclick="selectSong(-1)">&lt;</button
+              >&nbsp;&nbsp;
+              <button class="artists" onclick="selectSong(1)">&gt;</button
+              ><br />
+              <button class="artists" onclick="loadMidiJson()">Load Song</button
+              ><br />
+              <button class="artists" onclick="clearSong()">Clear Song</button
+              ><br />
+            </div>
+          </div>
+        </a-entity>
+
+        <a-entity position="0 1 1" id="steeldrums"></a-entity>
+
+        <a-entity htmlembed="" position="0.34121 1.76533 -1.58587" rotation="" class="screen" style="display: none; position: absolute; top: 0px; left: 0px; overflow: hidden;">
+          <div class="medium">
+            <div style="font-family: sans-serif;text-align: center">
+              <h2 style="color:white">Steel Drums</h2>
+
+              <button class="instruments" onclick="changeSteeldrumInstrument(0);">
+                Piano
+              </button>
+              <button class="instruments" onclick="changeSteeldrumInstrument(112);">
+                Tinkle Bell
+              </button>
+              <button class="instruments" onclick="changeSteeldrumInstrument(113);">
+                Agogo
+              </button>
+              <button class="instruments" onclick="changeSteeldrumInstrument(114);">
+                Steel Drums
+              </button>
+              <button class="instruments" onclick="changeSteeldrumInstrument(115);">
+                Woodblock
+              </button>
+              <button class="instruments" onclick="changeSteeldrumInstrument(116);">
+                Taiko Drum
+              </button>
+              <button class="instruments" onclick="changeSteeldrumInstrument(117);">
+                Melodic Tom
+              </button>
+              <button class="instruments" onclick="changeSteeldrumInstrument(118);">
+                Synth Drum
+              </button>
+              <button class="instruments" onclick="changeSteeldrumInstrument(9);">
+                Glockenspiel
+              </button>
+            </div>
+          </div>
+        </a-entity>
+
+        <a-entity position="4 .4 0" id="drums"></a-entity>
+
+        <a-entity htmlembed="" position="-1.72747 1.7 -1.5" rotation="" class="screen" style="display: none; position: absolute; top: 0px; left: 0px; overflow: hidden;">
+          <div class="medium">
+            <div style="font-family: sans-serif;text-align: center">
+              <h2 style="color:white">Harp</h2>
+
+              <button class="instruments" onclick="changeHarpInstrument(45);">
+                Pizzcato String
+              </button>
+              <button class="instruments" onclick="changeHarpInstrument(46);">
+                Orchestral Harp
+              </button>
+              <button class="instruments" onclick="changeHarpInstrument(107);">
+                Koto
+              </button>
+              <button class="instruments" onclick="changeHarpInstrument(92);">
+                Pad 5 (bowed)
+              </button>
+              <button class="instruments" onclick="changeHarpInstrument(53);">
+                Voice Oohs
+              </button>
+              <button class="instruments" onclick="changeHarpInstrument(24);">
+                Acoustic Guitar (nylon)
+              </button>
+              <button class="instruments" onclick="changeHarpInstrument(25);">
+                Acoustic Guitar (steel)
+              </button>
+
+              <button class="instruments" onclick="changeHarpInstrument(28);">
+                Electric Guitar (muted)
+              </button>
+              <button class="instruments" onclick="changeHarpInstrument(8);">
+                Celesta
+              </button>
+            </div>
+          </div>
+        </a-entity>
+
+        <a-entity position="-4 1.5 0" id="harp"> </a-entity>
+      </a-entity>
+    </a-scene>
+
+    <script src="js/mallets.js"></script>
+    <script src="js/piano.js"></script>
+    <script src="js/noteplayer.js"></script>
+    <script src="js/steeldrums.js"></script>
+    <script src="js/drums.js"></script>
+    <script src="js/harp.js"></script>
+    <script src="js/allinstruments.js"></script>
+
+    <script src="js/pianohero.js"></script>
+    <script src="js/helper.js"></script>
+  </body>
+</html>

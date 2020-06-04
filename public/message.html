@@ -1,0 +1,341 @@
+<html>
+  <head>
+    <!-- container for meta tag information -->
+    <title>SuperCruisr</title>
+
+    <meta charset="UTF-8" />
+
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+      crossorigin="anonymous"
+    />
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="assets/css/plugin.css" />
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="assets/css/dark.css" />
+
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- load external script files -->
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css"
+    />
+
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
+    <script src="easyrtc/easyrtc.js"></script>
+    <script src="https://unpkg.com/networked-aframe@^0.6.0/dist/networked-aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-play-sound-on-event@1.0.2/dist/aframe-play-sound-on-event.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
+
+    <script src="js/travel-node-component.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script>
+    <script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+    <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
+    <script src="https://unpkg.com/aframe-particle-system-component@1.0.5/dist/aframe-particle-system-component.min.js"></script>
+    <script src="js/spawn-in-circle.component.js"></script>
+    <!-- A-Frame Master -->
+    <!-- <script src="https://rawgit.com/aframevr/aframe/master/dist/aframe-master.min.js"></script> -->
+
+    <!-- A-Frame Extras -->
+    <!-- <script src="//unpkg.com/aframe-extras@3.13.1/dist/aframe-extras.min.js"></script> -->
+
+    <!-- A-Frame Animation -->
+    <!-- <script src="//unpkg.com/aframe-animation-component@4.1.*/dist/aframe-animation-component.min.js"></script> -->
+
+    <!-- A-Frame Environment -->
+    <script src="//unpkg.com/aframe-environment-component@1.0.0/dist/aframe-environment-component.min.js"></script>
+
+    <script>
+      AFRAME.registerComponent("typer", {
+        dependencies: ["text", "sound__typer", "sound__beep"],
+
+        schema: {
+          message: { type: "string" },
+          speed: { type: "int", default: 50 },
+          prefix: { type: "string" },
+          // suffix:      { type: 'string' },
+          cursorChar: { type: "string", default: "|" },
+          cursorSpeed: { type: "int", default: 500 },
+          wrapChar: { type: "string", default: "\\" },
+          on: { type: "string", default: "loaded" }
+          // sound assets
+        },
+
+        init: function() {
+          // this.wrapCount = this.el.components.text.data.wrapCount;
+          this.cursorVisible = true;
+          this.output = "";
+          this.char = 0;
+
+          // Throttle the function to only occur at the defined intervals within tick
+          // this.printMessage = AFRAME.utils.throttle(this.printMessage, this.data.speed, this);
+
+          this.el.addEventListener(
+            this.data.on,
+            function(e) {
+              console.log("clicked");
+
+              console.log(this.output);
+              console.log(this.char);
+
+              if (this.timer) {
+                console.log("interval exists");
+                clearInterval(this.timer);
+                this.timer = null;
+                this.char = 0;
+                this.output = "";
+                // this.el.setAttribute('text', 'value' , '');
+                this.el.components.sound__typer.stopSound();
+                return;
+              }
+
+              // Using instead of throttled tick function
+              this.timer = setInterval(
+                this.printMessage.bind(this),
+                this.data.speed
+              );
+            }.bind(this)
+          );
+        },
+
+        tick: function() {
+          // Throttled function.
+          // this.printMessage();
+        },
+
+        printMessage: function() {
+          if (this.char < this.data.message.length) {
+            if (this.char === 0) {
+              this.el.components.sound__typer.playSound();
+            }
+
+            if (this.data.message.charAt(this.char) === this.data.wrapChar) {
+              // console.log('found');
+              this.el.components.sound__typer.stopSound();
+              this.el.components.sound__typer.playSound();
+            }
+
+            // this.output += this.data.prefix;
+            this.output += this.data.message.charAt(this.char);
+            // this.output += this.data.suffix;
+            this.el.setAttribute(
+              "text",
+              "value",
+              this.data.prefix + this.output + this.data.cursorChar
+            );
+          } else if (this.char >= this.data.message.length) {
+            if (this.char === this.data.message.length) {
+              this.el.components.sound__typer.stopSound();
+              this.el.components.sound__beep.playSound();
+              // this.el.emit('beep');
+            }
+
+            if (this.char % (this.data.cursorSpeed / this.data.speed) === 0) {
+              this.cursorVisible = !this.cursorVisible;
+
+              this.el.setAttribute(
+                "text",
+                "value",
+                this.output + (this.cursorVisible ? " " : this.data.cursorChar)
+              );
+            }
+          }
+
+          this.char++;
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="preloader">
+      <div class="loader-logo text-center">
+        <img
+          src="https://beta-supercruisr.neocities.org/assets/white.png"
+          alt=""
+        />
+        <p>Loading SuperCruisr</p>
+      </div>
+    </div>
+
+    <!-- Start Header -->
+
+    <nav>
+      <div class="logo">
+        <a href="index.html"
+          ><img
+            src="https://beta-supercruisr.neocities.org/assets/white.png"
+            alt="logo"
+        /></a>
+      </div>
+      <div class="toggle-btn">
+        <div class="burger-menu">
+          <span class="one"></span>
+          <span class="two"></span>
+          <span class="tre"></span>
+        </div>
+      </div>
+
+      <div class="bg-nav"></div>
+
+      <div class="manu-container">
+        <div class="menu">
+          <div class="data">
+            <div class="container">
+              <div class="loader-image">
+                <img
+                  src="https://beta-supercruisr.neocities.org/assets/blackloader.png"
+                  alt=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- SCENE -->
+
+    <a-scene
+      networked-scene="
+      room: audio;
+      adapter: easyrtc;
+      audio: true;
+      debug: true;
+    "
+      background="color: black;"
+    >
+      <a-assets timeout="10000">
+        <!-- Audio assets are not to be freely distributed. -->
+        <audio
+          id="typing"
+          src="https://ucarecdn.com/65c0d1dd-9d4b-4743-bf16-4258c2be79b7/"
+          crossorigin="anonymous"
+        ></audio>
+        <audio
+          id="beep"
+          src="https://ucarecdn.com/21b9c292-934d-4eac-947a-c1300339b3ec/"
+          crossorigin="anonymous"
+        ></audio>
+        <template id="avatar-template">
+          <a-entity class="avatar" networked-audio-source>
+            <a-sphere
+              class="head"
+              color="#5985ff"
+              scale="0.45 0.5 0.4"
+              random-color
+            ></a-sphere>
+            <a-entity class="face" position="0 0.05 0">
+              <a-sphere
+                class="eye"
+                color="#efefef"
+                position="0.16 0.1 -0.35"
+                scale="0.12 0.12 0.12"
+              >
+                <a-sphere
+                  class="pupil"
+                  color="#000"
+                  position="0 0 -1"
+                  scale="0.2 0.2 0.2"
+                ></a-sphere>
+              </a-sphere>
+              <a-sphere
+                class="eye"
+                color="#efefef"
+                position="-0.16 0.1 -0.35"
+                scale="0.12 0.12 0.12"
+              >
+                <a-sphere
+                  class="pupil"
+                  color="#000"
+                  position="0 0 -1"
+                  scale="0.2 0.2 0.2"
+                ></a-sphere>
+              </a-sphere>
+            </a-entity>
+          </a-entity>
+        </template>
+      </a-assets>
+
+      <a-entity environment="preset: starry;"></a-entity>
+
+      <a-entity
+        id="player"
+        networked="template:#avatar-template;attachTemplateToLocal:false;"
+        spawn-in-circle="radius:3;"
+        look-controls
+      >
+        <a-camera
+          wasd-controls
+          look-controls="pointerLockEnabled: false;"
+          position="0 1.6 0"
+        >
+          <a-cursor fuse="false"></a-cursor>
+        </a-camera>
+        <a-sphere class="head" visible="false" random-color></a-sphere>
+      </a-entity>
+
+      <!--   <a-box color="gray" height="4" width="5" depth="1.5" position="0 2.5 -4">
+    
+    <a-box color="gray" height="3.5" width="4.5" depth="0.25" position="0 0 -0.85"></a-box>
+    
+    <a-box color="gray" height="2.5" width="3.5" depth="1" position="0 0 -1.5"></a-box>
+    
+    
+     <a-entity geometry="primitive: plane; width: 4; height: 3;" material="color: #010; roughness: 0; side: double;" typer="prefix: root:~$\t./decrypt_email.sh\n\n; message: We all have something to answer for.\n\nSomething that we've kept veiled behind the broken mirror of our consciousness.\n\nNo one is left to pick up the shards.\n\nThey're all gone.\n\nWhat have we done...?\n\n-- L3V1A7HAN" text="font: monoid; align: left; color: green; width: 3.7; zOffset: 0.01; letterSpacing: -5; tabSize: 2;" position="0 0 0.76" sound__typer="src: #typing; autoplay: false; loop: true;" sound__beep="src: #beep; autoplay: false; loop: false; on: beep;"></a-entity>
+    
+    
+  </a-box> -->
+
+      <!--   <a-entity geometry="primitive: plane; height: 10; width: auto" material="opacity: 0;" typer="prefix: root:~$\t./decrypt_email.sh\n\n; message: We all have something to answer for.\n\nSomething that we've kept veiled behind the broken mirror of our collective consciousness.\n\nNo one is left to pick up the shards.\n\nThey're all gone.\n\nWhat have we done?...\n\n- L3V1A7HAN\n\n<END_MESSAGE>\n\n; on: click;" text="value: 1 Unread Message. Click to read.; font: monoid; align: left; color: cyan; width: 3; zOffset: 0.01; letterSpacing: -4; tabSize: 1; side: double;" position="0 2 2" sound__typer="src: #typing; autoplay: false; loop: true;" sound__beep="src: #beep; autoplay: false; loop: false;" rotation="-15 180 0"></a-entity> -->
+
+      <a-entity
+        geometry="primitive: plane; height: 10; width: auto"
+        material="opacity: 0;"
+        typer="message: LOS ANGELES 2029 A.D.\n\nTHE MACHINES ROSE FROM THE ASHES OF THE NUCLEAR FIRE.\n\nTHEIR WAR TO EXTERMINATE MANKIND HAD RAGED FOR DECADES, BUT THE FINAL BATTLE WOULD NOT BE FOUGHT IN THE FUTURE.\n\nIT WOULD BE FOUGHT HERE, IN OUR PRESENT.\n\nTONIGHT...\n\n; on: click;"
+        text="value: 1 UNREAD MESSAGE. CLICK TO READ.; font: monoid; align: left; color: white; width: 3; zOffset: 0.01; letterSpacing: -4; tabSize: 1; side: double;"
+        position="0 2 -2"
+        sound__typer="src: #typing; autoplay: false; loop: true;"
+        sound__beep="src: #beep; autoplay: false; loop: false;"
+        rotation="-15 0 0"
+      ></a-entity>
+    </a-scene>
+
+    <script>
+      // On mobile remove elements that are resource heavy
+      var isMobile = AFRAME.utils.device.isMobile();
+
+      if (isMobile) {
+        var particles = document.getElementById("particles");
+        particles.parentNode.removeChild(particles);
+      }
+
+      // Define custom schema for syncing avatar color, set by random-color
+      NAF.schemas.add({
+        template: "#avatar-template",
+        components: [
+          "position",
+          "rotation",
+          {
+            selector: ".head",
+            component: "material",
+            property: "color"
+          }
+        ]
+      });
+    </script>
+    <script src="assets/js/plugin.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

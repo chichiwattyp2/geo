@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-play-sound-on-event@1.0.2/dist/aframe-play-sound-on-event.min.js"></script>
+    <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+    <script src="js/travel-node-component.js"></script>
+  </head>
+
+  <body style="margin : 0px; overflow: hidden;">
+    <a-scene vr-mode-ui="enabled: true;" loading-screen="enabled: false;">
+      <a-assets>
+        <a-asset-item id="animated-asset" src="https://cdn.glitch.com/3562e692-993b-4eb4-a630-f341590dba1c%2Fscuba.glb?v=1591056575551"></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        id="animated-marker"
+        type="pattern"
+        preset="custom"
+        url="assets/marker.patt"
+      >
+        <a-entity
+          scale="1 1 1"
+          animation-mixer="loop: repeat"
+          gltf-model="#animated-asset"
+        ></a-entity>
+      </a-entity>
+
+      <a-sphere
+        id="geo-dome"
+        radius="10"
+        material="color: #ff2c2c; transparent: true; opacity: 0.3; side: double;"
+        position="0 0 0"
+      >
+      </a-sphere>
+      <a-entity
+        camera
+        position="0 1.6 3"
+        wasd-controls
+        look-controls
+        touch-controls
+      >
+      </a-entity>
+    </a-scene>
+  </body>
+</html>
