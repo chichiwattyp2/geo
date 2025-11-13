@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Android Video Stream Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .info-section {
+            background: #f5f7fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-section h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info-section p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .viewer-id {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        .status {
+            background: #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+            color: #2d3436;
+            transition: all 0.3s ease;
+        }
+
+        .status.connected {
+            background: #55efc4;
+            color: #00b894;
+        }
+
+        .status.streaming {
+            background: #74b9ff;
+            color: #0984e3;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .video-container {
+            position: relative;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        #remoteVideo {
+            width: 100%;
+            height: auto;
+            display: block;
+            min-height: 400px;
+            object-fit: contain;
+        }
+
+        .no-signal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #95a5a6;
+            font-size: 24px;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.disconnect {
+            background: #e74c3c;
+        }
+
+        button.disconnect:hover {
+            background: #c0392b;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .instructions h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .code {
+            background: #2d3436;
+            color: #55efc4;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱➡️💻 Android Stream Viewer</h1>
+
+        <div class="info-section">
+            <h3>📡 Your Viewer ID</h3>
+            <div class="viewer-id" id="viewerId">Connecting to server...</div>
+            <p style="text-align: center; font-size: 14px; color: #666;">
+                Keep this page open. Your Android app will automatically connect.
+            </p>
+        </div>
+
+        <div class="status" id="status">⏳ Initializing...</div>
+
+        <div class="video-container">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div class="no-signal" id="noSignal">
+                <div>📡</div>
+                <div>Waiting for Android stream...</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="startBtn">🎥 Start Viewer</button>
+            <button id="disconnectBtn" class="disconnect" style="display: none;">❌ Disconnect</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="label">Connection State</div>
+                <div class="value" id="connectionState">New</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">ICE State</div>
+                <div class="value" id="iceState">New</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Bytes Received</div>
+                <div class="value" id="bytesReceived">0</div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h4>📋 How to Use:</h4>
+            <ol>
+                <li>Click <span class="code">Start Viewer</span> button above</li>
+                <li>Copy your <strong>Viewer ID</strong> (shown above in purple box)</li>
+                <li>Open the Android app and enter your PC's IP address</li>
+                <li>The Android app will show you as an available viewer</li>
+                <li>Click connect on Android to start streaming!</li>
+            </ol>
+        </div>
+
+        <div class="info-section" style="margin-top: 20px;">
+            <h3>🔧 Troubleshooting</h3>
+            <p><strong>Can't connect?</strong> Make sure your Android device and PC are on the same network.</p>
+            <p><strong>Find your PC's IP:</strong> Open Command Prompt/Terminal and type <span class="code">ipconfig</span> (Windows) or <span class="code">ifconfig</span> (Mac/Linux)</p>
+            <p><strong>Firewall issues?</strong> Make sure port 8080 is allowed through your firewall.</p>
+        </div>
+    </div>
+
+    <!-- Include Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        // DOM Elements
+        const viewerIdEl = document.getElementById('viewerId');
+        const statusEl = document.getElementById('status');
+        const startBtn = document.getElementById('startBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const noSignal = document.getElementById('noSignal');
+        const connectionStateEl = document.getElementById('connectionState');
+        const iceStateEl = document.getElementById('iceState');
+        const bytesReceivedEl = document.getElementById('bytesReceived');
+
+        // WebRTC and Socket.IO variables
+        let socket;
+        let peerConnection;
+        let myId;
+        let androidId;
+
+        // ICE servers configuration
+        const iceServers = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun3.l.google.com:19302' }
+            ]
+        };
+
+        // Update status with color coding
+        function updateStatus(message, type = 'info') {
+            statusEl.textContent = message;
+            statusEl.className = 'status';
+
+            if (type === 'connected') {
+                statusEl.classList.add('connected');
+            } else if (type === 'streaming') {
+                statusEl.classList.add('streaming');
+            }
+        }
+
+        // Start viewer
+        startBtn.addEventListener('click', () => {
+            connectToServer();
+            startBtn.style.display = 'none';
+            disconnectBtn.style.display = 'inline-block';
+        });
+
+        // Disconnect
+        disconnectBtn.addEventListener('click', () => {
+            disconnect();
+            startBtn.style.display = 'inline-block';
+            disconnectBtn.style.display = 'none';
+        });
+
+        // Connect to Socket.IO server
+        function connectToServer() {
+            updateStatus('🔌 Connecting to server...');
+
+            socket = io.connect(window.location.origin);
+
+            socket.on('connect', () => {
+                console.log('Connected to server');
+                updateStatus('✅ Connected to server', 'connected');
+
+                // Authenticate with EasyRTC
+                socket.emit('easyrtcAuth', {
+                    msgType: 'authenticate',
+                    msgData: {
+                        apiVersion: '1.0.0',
+                        applicationName: 'default'
+                    }
+                });
+            });
+
+            socket.on('easyrtc_authenticated', (data) => {
+                myId = data.msgData.easyrtcid;
+                viewerIdEl.textContent = 'Your ID: ' + myId;
+                console.log('Authenticated with ID:', myId);
+                updateStatus('✅ Ready! Waiting for Android app to connect...', 'connected');
+            });
+
+            socket.on('easyrtcMsg', (msg) => {
+                console.log('Received message:', msg.msgType);
+                handleSignalingMessage(msg);
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Disconnected from server');
+                updateStatus('❌ Disconnected from server');
+                cleanup();
+            });
+
+            socket.on('connect_error', (error) => {
+                console.error('Connection error:', error);
+                updateStatus('❌ Connection error: ' + error.message);
+            });
+        }
+
+        // Handle signaling messages
+        function handleSignalingMessage(msg) {
+            const msgType = msg.msgType;
+
+            if (msgType === 'offer') {
+                handleOffer(msg);
+            } else if (msgType === 'answer') {
+                handleAnswer(msg);
+            } else if (msgType === 'candidate') {
+                handleCandidate(msg);
+            }
+        }
+
+        // Handle offer from Android (we actually want to send offer to Android)
+        // But with EasyRTC, the Android will send offer first
+        function handleOffer(msg) {
+            androidId = msg.senderId;
+            const sdp = msg.msgData.actualData.sdp;
+
+            updateStatus('📱 Android device connected! Setting up stream...', 'connected');
+
+            createPeerConnection();
+
+            const offer = new RTCSessionDescription({
+                type: 'offer',
+                sdp: sdp
+            });
+
+            peerConnection.setRemoteDescription(offer)
+                .then(() => {
+                    console.log('Remote description set');
+                    return peerConnection.createAnswer();
+                })
+                .then((answer) => {
+                    return peerConnection.setLocalDescription(answer);
+                })
+                .then(() => {
+                    // Send answer back to Android
+                    sendAnswer(peerConnection.localDescription);
+                    updateStatus('🎥 Stream starting...', 'streaming');
+                })
+                .catch((error) => {
+                    console.error('Error handling offer:', error);
+                    updateStatus('❌ Error: ' + error.message);
+                });
+        }
+
+        // Handle answer (if we sent offer)
+        function handleAnswer(msg) {
+            const sdp = msg.msgData.actualData.sdp;
+
+            const answer = new RTCSessionDescription({
+                type: 'answer',
+                sdp: sdp
+            });
+
+            peerConnection.setRemoteDescription(answer)
+                .then(() => {
+                    console.log('Answer set successfully');
+                })
+                .catch((error) => {
+                    console.error('Error setting answer:', error);
+                });
+        }
+
+        // Handle ICE candidate
+        function handleCandidate(msg) {
+            const candidateData = msg.msgData.actualData;
+
+            const candidate = new RTCIceCandidate({
+                sdpMid: candidateData.id,
+                sdpMLineIndex: candidateData.label,
+                candidate: candidateData.candidate
+            });
+
+            if (peerConnection) {
+                peerConnection.addIceCandidate(candidate)
+                    .then(() => {
+                        console.log('ICE candidate added');
+                    })
+                    .catch((error) => {
+                        console.error('Error adding ICE candidate:', error);
+                    });
+            }
+        }
+
+        // Create peer connection
+        function createPeerConnection() {
+            peerConnection = new RTCPeerConnection(iceServers);
+
+            // Handle ICE candidates
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    sendCandidate(event.candidate);
+                }
+            };
+
+            // Handle connection state changes
+            peerConnection.onconnectionstatechange = () => {
+                const state = peerConnection.connectionState;
+                connectionStateEl.textContent = state;
+                console.log('Connection state:', state);
+
+                if (state === 'connected') {
+                    updateStatus('✅ Streaming active!', 'streaming');
+                    noSignal.style.display = 'none';
+                    startStatsMonitoring();
+                } else if (state === 'disconnected' || state === 'failed') {
+                    updateStatus('❌ Connection lost');
+                    noSignal.style.display = 'block';
+                } else if (state === 'connecting') {
+                    updateStatus('🔄 Connecting...', 'info');
+                }
+            };
+
+            // Handle ICE connection state changes
+            peerConnection.oniceconnectionstatechange = () => {
+                const state = peerConnection.iceConnectionState;
+                iceStateEl.textContent = state;
+                console.log('ICE connection state:', state);
+            };
+
+            // Handle incoming media stream
+            peerConnection.ontrack = (event) => {
+                console.log('Received remote track:', event.track.kind);
+
+                if (event.streams && event.streams[0]) {
+                    remoteVideo.srcObject = event.streams[0];
+                    updateStatus('🎥 Receiving video stream!', 'streaming');
+                    noSignal.style.display = 'none';
+                }
+            };
+        }
+
+        // Send answer to Android
+        function sendAnswer(answer) {
+            socket.emit('easyrtcMsg', {
+                msgType: 'answer',
+                targetId: androidId,
+                msgData: {
+                    actualData: {
+                        type: answer.type,
+                        sdp: answer.sdp
+                    }
+                }
+            });
+
+            console.log('Answer sent to Android');
+        }
+
+        // Send ICE candidate to Android
+        function sendCandidate(candidate) {
+            socket.emit('easyrtcMsg', {
+                msgType: 'candidate',
+                targetId: androidId,
+                msgData: {
+                    actualData: {
+                        type: 'candidate',
+                        id: candidate.sdpMid,
+                        label: candidate.sdpMLineIndex,
+                        candidate: candidate.candidate
+                    }
+                }
+            });
+
+            console.log('ICE candidate sent');
+        }
+
+        // Start monitoring statistics
+        function startStatsMonitoring() {
+            setInterval(() => {
+                if (peerConnection) {
+                    peerConnection.getStats(null).then((stats) => {
+                        stats.forEach((report) => {
+                            if (report.type === 'inbound-rtp' && report.mediaType === 'video') {
+                                const bytes = report.bytesReceived || 0;
+                                const mb = (bytes / 1024 / 1024).toFixed(2);
+                                bytesReceivedEl.textContent = mb + ' MB';
+                            }
+                        });
+                    });
+                }
+            }, 1000);
+        }
+
+        // Disconnect and cleanup
+        function disconnect() {
+            cleanup();
+
+            if (socket) {
+                socket.disconnect();
+            }
+
+            updateStatus('⏹️ Disconnected');
+            noSignal.style.display = 'block';
+            viewerIdEl.textContent = 'Disconnected';
+        }
+
+        // Cleanup peer connection
+        function cleanup() {
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+
+            remoteVideo.srcObject = null;
+            androidId = null;
+
+            connectionStateEl.textContent = 'New';
+            iceStateEl.textContent = 'New';
+            bytesReceivedEl.textContent = '0';
+        }
+
+        // Handle page unload
+        window.addEventListener('beforeunload', () => {
+            disconnect();
+        });
+    </script>
+</body>
+</html>
