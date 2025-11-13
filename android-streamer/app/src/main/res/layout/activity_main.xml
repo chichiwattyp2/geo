@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#1a1a1a">
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📱 Android Video Streamer"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:padding="16dp" />
+
+    <!-- Video Preview -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="16dp"
+        android:elevation="4dp"
+        android:radius="8dp">
+
+        <org.webrtc.SurfaceViewRenderer
+            android:id="@+id/localVideoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#000000" />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Server URL Input -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Server URL:"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/serverUrlInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="http://192.168.1.100:8080"
+        android:inputType="textUri"
+        android:padding="12dp"
+        android:background="@drawable/input_background"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#888888"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Room ID Input -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Room ID:"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/roomIdInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="stream-room"
+        android:inputType="text"
+        android:padding="12dp"
+        android:background="@drawable/input_background"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#888888"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Status Text -->
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Status: Ready"
+        android:textColor="#4CAF50"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="12dp"
+        android:background="@drawable/status_background"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Control Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/connectButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Connect"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_connect"
+            android:padding="16dp"
+            android:layout_marginEnd="8dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/disconnectButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Disconnect"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_disconnect"
+            android:padding="16dp"
+            android:layout_marginStart="8dp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/switchCameraButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🔄 Switch Camera"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_switch"
+        android:padding="16dp"
+        android:layout_marginTop="8dp"
+        android:textStyle="bold" />
+
+</LinearLayout>
